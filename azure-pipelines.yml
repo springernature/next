@@ -1,0 +1,63 @@
+variables:
+  majorMinorVersion: 1.0
+  semanticVersion: $[counter(variables['majorMinorVersion'], 0)]
+  version: $[format('{0}.{1}', variables['majorMinorVersion'], variables['semanticVersion'])]
+
+trigger:
+  branches:
+    include:
+      - master
+  paths:
+    include:
+      - src/*
+
+pr:
+  paths:
+    include:
+    - src/*
+
+pool:
+  vmImage: 'windows-latest'
+
+steps:
+- task: UseDotNet@2
+  displayName: Use .NET 6.0
+  inputs:
+    packageType: 'sdk'
+    version: '6.0.x'
+    
+- task: NuGetCommand@2
+  displayName: Restore Packages
+  inputs:
+    command: 'restore'
+    restoreSolution: 'Next.sln'
+    feedsToUse: 'config'
+    nugetConfigPath: 'nuget.config'
+    externalFeedCredentials: 'Springer Nature Artifactory (Pull)'
+
+- task: DotNetCoreCLI@2
+  displayName: Build Solution
+  inputs:
+    command: 'build'
+    workingDirectory: '.'
+    arguments: '-c Release --no-restore'
+
+- task: DotNetCoreCLI@2
+  displayName: Create Packages
+  condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
+  inputs:
+    command: 'pack'
+    packagesToPack: 'Next.sln'
+    configuration: 'release'
+    nobuild: true
+    versioningScheme: byEnvVar
+    versionEnvVar: VERSION
+
+- task: NuGetCommand@2
+  displayName: Push to SpringerNature Artifactory
+  condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
+  inputs:
+    command: 'push'
+    packagesToPush: '$(Build.ArtifactStagingDirectory)/**/*.nupkg;!$(Build.ArtifactStagingDirectory)/**/*.symbols.nupkg'
+    nuGetFeedType: 'external'
+    publishFeedCredentials: 'Springer Nature Artifactory'
