@@ -1,15 +1,14 @@
 <Project>
  <PropertyGroup>
   <NeutralLanguage>en-GB</NeutralLanguage>
+  <Authors>Team Sigma</Authors>
   <Copyright>Copyright © CPilao 2020</Copyright>
-  <Authors>Carlos Pilão</Authors>
-  <Owners>Carlos Pilão</Owners>
   <TargetFramework>net6.0</TargetFramework>
   <OutputType>Library</OutputType>
   <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
   <IsPackable>true</IsPackable>
-  <PackageProjectUrl>https://github.com/sweepator/next</PackageProjectUrl>
-  <RepositoryUrl>https://github.com/sweepator/next</RepositoryUrl>
+  <PackageProjectUrl>https://github.com/springernature/next</PackageProjectUrl>
+  <RepositoryUrl>https://github.com/springernature/next</RepositoryUrl>
   <RepositoryType>git</RepositoryType>
   <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
   <PublishRepositoryUrl>true</PublishRepositoryUrl>
